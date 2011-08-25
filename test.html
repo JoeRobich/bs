@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>BasicScript</title>
+    <link rel="stylesheet" type="text/css" href="test.css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script src="ast.js" type="text/javascript"></script>
+    <script src="ast_interpreter.js" type="text/javascript"></script>
+    <script src="bs_parser.js" type="text/javascript"></script>
+    <script src="test.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <textarea id="src">
+sub main()
+  var a as integer = input("what number?")
+
+  if (a = 1) then
+   print(1)
+  else if (a = 2) then
+   print(2)
+  else
+    print("other")
+  end if
+
+end sub
+    </textarea>
+    <button id="run">Run</button>
+  </body>
+</html>

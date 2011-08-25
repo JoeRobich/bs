@@ -1,0 +1,327 @@
+{
+  var AstMethod = function(name, parameters, type, body) {
+      this.nodeType = "METHOD";
+      this.name = name;
+      this.parameters = parameters;
+      this.type = type;
+      this.body = body;
+  };
+  
+  var AstMethodCall = function(name, parameters) {
+      this.nodeType = "METHOD_CALL";
+      this.name = name;
+      this.parameters = parameters;
+  };
+
+  var AstSystemCall = function(name, parameters) {
+      this.nodeType = "SYSTEM_CALL";
+      this.name = name;
+      this.parameters = parameters;
+  };
+  
+  var AstReturn = function(expression) {
+      this.nodeType = "RETURN";
+      this.expression = expression;
+  };
+  
+  var AstConstant = function(type, value) {
+      this.nodeType = "CONSTANT";
+      this.type = type;
+      this.value = value;
+  };
+
+  var AstVariableRef = function(name) {
+      this.nodeType = "VAR_REF";
+      this.name = name;
+  };
+
+  var AstArrayRef = function(name, index) {
+      this.nodeType = "ARRAY_REF";
+      this.name = name;
+      this.index = index;
+  };
+
+  var AstComment = function(message) { 
+      this.nodeType = "COMMENT";
+      this.message = message;
+  };
+
+  var AstAssignment = function(variable, expression) {
+      this.nodeType = "ASSIGNMENT";
+      this.variable = variable;
+      this.expression = expression;
+  };
+
+  var AstIf = function(condition, body, elseBody) {
+      this.nodeType = "IF";
+      this.condition = condition;
+      this.body = body;
+      this.elseBody = elseBody;
+  };
+  
+  var AstExit = function(flowType) {
+      this.nodeType = "EXIT";
+      this.flowType = flowType;
+  };
+
+  var AstComparison = function(left, right, operation) {
+      this.nodeType = "COMPARISON";
+      this.operation = operation;
+      this.left = left;
+      this.right = right;
+  };
+  
+  var AstArithmetic = function(left, right, operation) {
+      this.nodeType = "ARITHMETIC";
+      this.operation = operation;
+      this.left = left;
+      this.right = right;
+  };
+  
+  var AstNot = function(expression, operation) {
+      this.nodeType = "NOT";
+      this.operation = operation;
+      this.expression = expression;
+  };
+
+  var AstWhile = function(condition, body) {
+      this.nodeType = "WHILE";
+      this.condition = condition;
+      this.body = body;
+  };
+
+  var AstFor = function(variable, lower, upper, step, body) {
+      this.nodeType = "FOR";
+      this.variable = variable;
+      this.lower = lower;
+      this.upper = upper;
+      this.step = step;
+      this.body = body;
+  };
+
+  var AstVarDeclaration = function(term, type, expression) {
+      this.nodeType = "VAR_DEC";
+      this.term = term;
+      this.type = type;
+      this.expression = expression;
+  };
+
+  var AstConstDeclaration = function(term, type, expression) {
+      this.nodeType = "CONST_DEC";
+      this.term = term;
+      this.type = type;
+      this.expression = expression;
+  };
+}
+
+start
+  = methods
+
+methods
+  = methds:method*
+  { return methds; }
+
+method
+  = whitespace* methd:(subroutine_methd / function_methd) whitespace* { return methd; }
+  / whitespace* stmt:(comment / const_declaration_stmt) whitespace* { return stmt;}
+
+subroutine_methd
+  = 'sub' whitespace+ name:name params:dec_parameter_list
+    body:statements whitespace* 'end' whitespace+ 'sub'
+  { return new AstMethod(name, params, undefined, body); }
+
+function_methd
+  = 'function' whitespace+ name:name params:dec_parameter_list
+    whitespace+ 'as' whitespace+ type:types
+    body:statements whitespace* 'end' whitespace+ 'function'
+  { return new AstMethod(name, params, type, body); }
+
+dec_parameter_list
+  = '(' whitespace* params:dec_parameters? whitespace* ')'
+  { return params ? params : []; }
+
+dec_parameters
+  = params:(param:dec_parameter whitespace* ',' whitespace* { return param; })* param:dec_parameter
+  { params ? params : []; params.push(param); return params; } 
+
+dec_parameter
+  = term:identifier_param whitespace+ 'as' whitespace+ type:types
+  { return new AstVarDeclaration(term, type, ""); }
+
+statements
+  =  stmts:statement*
+  { return stmts; }
+
+statement
+  = whitespace* stmt:(comment / flow_control / declaration / assign_stmt / system_call / method_call) whitespace*
+  { return stmt; }
+
+comment
+  = comment_stmt / multiline_comment_stmt
+
+comment_stmt
+  = "//" [ \t]* message:[^\n]* [ \t]* '\n'
+  { return new AstComment(message.join('')); }
+
+multiline_comment_stmt
+  = '/*' whitespace* message:[^'*/']* whitespace* '*/'
+  { return new AstComment(message.join('')); }
+
+declaration
+  = var_declaration_stmt / const_declaration_stmt
+
+var_declaration_stmt
+  = 'var' whitespace+ variable:identifier whitespace+ 
+    'as' whitespace+ type:types whitespace* 
+    expr:('=' whitespace* expr:expression { return expr; })? 
+  { return new AstVarDeclaration(variable, type, expr); }
+
+const_declaration_stmt
+  = 'const' whitespace+ variable:variable whitespace+
+    'as' whitespace+ type:types whitespace* 
+    '=' whitespace* expr:expression
+  { return new AstConstDeclaration(variable, type, expr); }
+
+assign_stmt
+  = id:identifier whitespace* '=' whitespace* expr:expression
+  { return new AstAssignment(id, expr); }
+
+flow_control
+  = if_stmt / while_stmt / for_stmt / exit_stmt / return_stmt
+
+return_stmt
+  = 'return' whitespace+ expr:expression
+  { return new AstReturn(expr); }
+
+exit_stmt
+  = 'exit' whitespace+ flowType:('for' / 'while')
+  { return new AstExit(flowType); }
+
+if_stmt
+  = 'if' whitespace+ condition:expression whitespace+ 'then' whitespace+
+    body:statements? whitespace* 
+    elseBody:('end' whitespace+ 'if' { return []; } / else?)
+  { return new AstIf(condition, body, elseBody); }
+
+else
+  = else_if_stmt / else_stmt
+
+else_if_stmt
+  = 'else' [ \t]+ ifstmt:if_stmt
+  { return [ifstmt]; }
+
+else_stmt
+  = 'else' whitespace+ elseBody:statements? whitespace* 'end' whitespace+ 'if'
+  { return elseBody ? elseBody : []; }
+
+while_stmt
+  = 'while' whitespace+ condition:expression whitespace+
+    body:statements? whitespace* 'end' whitespace+ 'while'
+  { return new AstWhile(condition, body); }
+
+for_stmt
+  = 'for' whitespace+ variable:variable whitespace* '=' whitespace*
+    lower:expression whitespace+ 'to' whitespace+ upper:expression 
+    step:(whitespace+ 'step' whitespace+ step:expression { return step; })?
+    whitespace+ body:statements? whitespace* 'end' whitespace+ 'for'
+  { return new AstFor(variable, lower, upper, step ? step : new AstConstant("INTEGER", 1), body); }
+
+expression
+  = conditional_expr
+
+conditional_expr
+  = left:arithmetic_expr whitespace* 
+    cmp:('and' / 'or' / '=' / '<=' / '>=' / '<>' / '<' / '>') whitespace* 
+    right:conditional_expr
+  { return new AstComparison(left, right, cmp); }
+  / arithmetic_expr
+
+arithmetic_expr
+  = left:not_expr whitespace*
+    op:('+' / '-' / '*' / '/') whitespace*
+    right:arithmetic_expr 
+  { return new AstArithmetic(left, right, op); }
+  / not_expr
+
+not_expr
+  = 'not' whitespace+ right:expression 
+  { return new AstNot(right, 'not'); }
+  / primary_expr
+
+primary_expr
+  = term
+  / '(' whitespace* expr:expression whitespace* ')' { return expr; }
+
+expression_list
+  = exprs:(expr:expression whitespace* ',' whitespace* { return expr; })* expr:expression
+  { exprs = exprs ? exprs : []; exprs.push(expr); return exprs; }
+  
+term
+  = system_call / method_call / constant / identifier
+
+system_call
+  = name:system_methods whitespace* '(' params: expression_list whitespace* ')'
+  { return new AstSystemCall(name, params); } 
+
+method_call
+  = name:name whitespace* '(' params: expression_list whitespace* ')'
+  { return new AstMethodCall(name, params); }
+
+identifier
+  = array / variable
+
+identifier_param
+  = array_param / variable
+
+variable
+  = variable:name 
+  { return new AstVariableRef(variable); }
+
+array_param
+  = name:name '[' whitespace* ']'
+  { return new AstArrayRef(name, undefined); }
+
+array
+  = name:name '[' index:integer ']'
+  { return new AstArrayRef(name, index); }
+
+constant
+  = boolean_const / string_const / float_const / integer_const
+
+boolean_const
+  = bool:('true' / 'false')
+  { return new AstConstant('BOOLEAN', bool[0] == 't'); }
+
+string_const
+  = '"' string:[^"]* '"'
+  { return new AstConstant('STRING', string.join('')); }
+
+float_const
+  = flt:float
+  { return new AstConstant('FLOAT', flt); }
+
+integer_const
+  = int:integer
+  { return new AstConstant('INTEGER', int); }
+
+float
+  = int:integer '.' decimal:[0-9]*
+  { return int + parseFloat('.' + decimal.join('') + '0'); }
+
+integer
+  = sign:'-'? int:[0-9]+
+  { return parseFloat(sign + int.join('')); }
+
+name
+  = first:[a-zA-Z_] remainder:[a-zA-Z0-9_]* 
+  { return first + remainder.join(''); }
+
+types
+  = type:('integer' / 'float' / 'string' / 'boolean')
+  { return type.toUpperCase(); }
+
+whitespace
+  = [ \t\n]
+
+system_methods
+  = ('print' / 'input')
