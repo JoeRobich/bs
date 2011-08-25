@@ -10,6 +10,7 @@
   </head>
   <body>
     <textarea id="src">
+//-- Sample app 1
 sub main()
   var a as integer = input("what number?")
 
@@ -22,6 +23,27 @@ sub main()
   end if
 
 end sub
+
+/*-- Sample app 2
+
+sub main()
+  var a as integer = input("what number?")
+
+  print(repeat("a", a))
+
+end sub
+    
+function repeat(letter as string, count as integer) as string
+  var result as string = ""
+  
+  for index = 1 to count
+    result = result + letter
+  end for
+
+  return result
+end function
+
+--*/
     </textarea>
     <button id="run">Run</button>
   </body>

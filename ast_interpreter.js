@@ -453,7 +453,8 @@ Ast.Interpreter = (function() {
         },
         
         visitAssignment: function(node) {
-            var variable = activeProgram.findVariable(node.variable.name);
+            var frame = activeProgram.getActiveFrame();
+            var variable = frame.findVariable(node.variable.name, true);
             var value = this.executeExpression(node.expression);
             
             if (variable) {
