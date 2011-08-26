@@ -11,7 +11,7 @@ var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightR
 var BSHighlightRules = function() {
     
     var keywords = lang.arrayToMap(
-    ("as|boolean|integer|float|string|for|end|exit|sub|function|if|const|var|to|return|while|else|and|or|not").split("|")
+    ("as|boolean|integer|float|string|for|end|exit|sub|function|if|then|const|var|to|return|while|else|and|or|not").split("|")
     );
 
     var buildinConstants = lang.arrayToMap(
