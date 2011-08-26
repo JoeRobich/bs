@@ -470,10 +470,10 @@ Ast.Interpreter = (function() {
         
         visitExit: function(node) {
             if (node.flowType == "for") {
-                throw new { type:"EXIT_FOR" };
+                throw { type:"EXIT_FOR" };
             }
             else if (node.flowType == "while") {
-                throw new { type:"EXIT_WHILE" };
+                throw { type:"EXIT_WHILE" };
             }
             
             throw new Error("Expected flow type of for or while but found " +
