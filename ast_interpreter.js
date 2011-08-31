@@ -463,7 +463,7 @@ Ast.Interpreter = (function() {
                     variable.value = value;
                 }
                 else {
-                    variable.values[node.index] = value;
+                    variable.values[node.variable.index] = value;
                 }
             }
         },
@@ -604,7 +604,7 @@ Ast.Interpreter = (function() {
                 if (variable === undefined) {                  
                     if (node.term.nodeType == "ARRAY_REF") {
                         variable = new ArrayInstance(node.term.name, 
-                                node.term.length, node.type, []);
+                                node.term.index, node.type, []);
                     }
                     else if (node.term.nodeType == "VAR_REF") {
                         var value = this.executeExpression(node.expression);
