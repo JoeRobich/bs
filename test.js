@@ -1,7 +1,7 @@
 $(document).ready(function() {
    var editor = ace.edit("editor");
    editor.setTheme("ace/theme/idle_fingers");
-   var BsMode = require("ace/mode/bs").Mode;
+   var BsMode = ace.require("ace/mode/bs").Mode;
    editor.getSession().setMode(new BsMode());
     
    $('#run').click(function() {
