@@ -1,8 +1,8 @@
-define("ace/mode/doc_comment_highlight_rules", 
-       ["require", "exports", "module", "pilot/oop", "ace/mode/text_highlight_rules"],
-       function (require, exports, module) {
+ace.define("ace/mode/doc_comment_highlight_rules", 
+       ["require", "exports", "module", "ace/lib/oop", "ace/mode/text_highlight_rules"],
+       function (require, exports, module, oop, textHighlightRules) {
            
-    var oop = require("pilot/oop");
+    var oop = require("ace/lib/oop");
     var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
     
     var DocCommentHighlightRules = function() {
