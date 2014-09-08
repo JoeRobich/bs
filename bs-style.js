@@ -1,4 +1,4 @@
-define("ace/mode/behaviour/Bsstyle", 
+ace.define("ace/mode/behaviour/Bsstyle", 
        ["require", "exports", "module", "pilot/oop", 'ace/mode/behaviour'],
        function(require, exports, module) {
 
