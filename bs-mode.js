@@ -1,4 +1,4 @@
-define("ace/mode/bs", 
+ace.define("ace/mode/bs", 
        ["require", "exports", "module", "pilot/oop", "ace/mode/text", 
         "ace/tokenizer", "ace/mode/bs_highlight_rules", "ace/mode/behaviour/Bsstyle"],
        function(require, exports, module) {
