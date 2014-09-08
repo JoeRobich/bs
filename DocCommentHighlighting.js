@@ -1,4 +1,4 @@
-define("ace/mode/doc_comment_highlight_rules", 
+ace.define("ace/mode/doc_comment_highlight_rules", 
        ["require", "exports", "module", "pilot/oop", "ace/mode/text_highlight_rules"],
        function (require, exports, module) {
            
