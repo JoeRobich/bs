@@ -1,9 +1,9 @@
 ace.define("ace/mode/bs", 
-       ["require", "exports", "module", "pilot/oop", "ace/mode/text", 
+       ["require", "exports", "module", "ace/lib/oop", "ace/mode/text", 
         "ace/tokenizer", "ace/mode/bs_highlight_rules", "ace/mode/behaviour/Bsstyle"],
        function(require, exports, module) {
 
-var oop = require("pilot/oop");
+var oop = require("ace/lib/oop");
 var TextMode = require("ace/mode/text").Mode;
 var Tokenizer = require("ace/tokenizer").Tokenizer;
 var BSHighlightRules = require("ace/mode/bs_highlight_rules").BSHighlightRules;

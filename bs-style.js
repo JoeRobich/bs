@@ -1,8 +1,8 @@
 ace.define("ace/mode/behaviour/Bsstyle", 
-       ["require", "exports", "module", "pilot/oop", 'ace/mode/behaviour'],
+       ["require", "exports", "module", "ace/lib/oop", 'ace/mode/behaviour'],
        function(require, exports, module) {
 
-var oop = require("pilot/oop");
+var oop = require("ace/lib/oop");
 var Behaviour = require('ace/mode/behaviour').Behaviour;
 
 var BsstyleBehaviour = function () {
